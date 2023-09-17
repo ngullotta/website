@@ -573,8 +573,23 @@ var main = (function($) { var _ = {
 											newSlide.loaded = true;
 											newSlide.$slide.removeClass('loading');
 
-										// Mark as active.
+											
+											// Mark as active.
 											newSlide.$slide.addClass('active');
+
+											let slideBg = $('<div class="slide-bg"></div>')
+											slideBg
+												.css('background-image', 'url(' + newSlide.url + ')')
+												.css('background-size', 'cover')
+												.css('background-position', 'center');
+
+											newSlide.$slide.prepend(slideBg)
+											
+											// // Add blurred background of same image
+											// newSlide.$slide
+											// 	.css('background-image', 'url(' + newSlide.url + ')')
+											// 	.css('background-size', 'cover')
+											// 	.css('background-position', 'center');
 
 										// Unlock.
 											window.setTimeout(function() {
