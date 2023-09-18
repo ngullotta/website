@@ -965,7 +965,7 @@ input, select, textarea {
 		display: -moz-flex;
 		display: -webkit-flex;
 		display: -ms-flex;
-		display: flex;
+		display: inline-block;
 		-moz-flex-wrap: wrap;
 		-webkit-flex-wrap: wrap;
 		-ms-flex-wrap: wrap;
@@ -976,8 +976,10 @@ input, select, textarea {
 
 		#thumbnails article {
 			position: relative;
-			width: 50%;
+			width: 100%;
 			outline: 0;
+			padding: 0.5rem;
+			filter: drop-shadow(5px 5px 5px black);
 		}
 
 			#thumbnails article .thumbnail {
@@ -1006,7 +1008,7 @@ input, select, textarea {
 					top: 0;
 					width: 100%;
 					height: 100%;
-					box-shadow: inset 0 0 0 2px #00D3B7, inset 0 0 0px 3px rgba(0, 0, 0, 0.15);
+					box-shadow: inset 0 0 0 2px #55749e, inset 0 0 0px 3px rgba(0, 0, 0, 0.15);
 					opacity: 0;
 					z-index: 1;
 				}
@@ -1226,7 +1228,7 @@ input, select, textarea {
 				background-repeat: no-repeat;
 				background-size: cover;
 				
-				filter: blur(2px);
+				filter: blur(5px);
 			}
 
 			#viewer .slide .image {
