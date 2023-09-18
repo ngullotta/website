@@ -11,6 +11,9 @@ beautifulsoup4 = "^4.12.2"
 Pillow = "^10.0.1"
 
 
+[tool.poetry.group.dev.dependencies]
+mdformat-gfm = "^0.3.5"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
