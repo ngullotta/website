@@ -4,7 +4,7 @@ from pathlib import Path
 from random import shuffle
 from shutil import copy
 from bs4 import BeautifulSoup as bs
-from PIL import Image
+from PIL import Image, ImageOps
 
 parser = ArgumentParser("Slate Updater")
 parser.add_argument("input", type=Path, default=Path("./slated"))
@@ -64,8 +64,14 @@ for i, file in enumerate(files):
 
     if args.resize_thumbs:
         t = Image.open(file)
-        new_t = t.resize((args.width, args.height))
-        new_t.save(tdest / file.name)
+        t = ImageOps.fit(
+            t, 
+            (args.width, args.height), 
+            bleed=0, 
+            centering=(0.5, 0.5), 
+            method=Image.Resampling.LANCZOS
+        )
+        t.save(tdest / file.name)
     else:
         copy(file, tdest / file.name)
 
