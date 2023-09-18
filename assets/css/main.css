@@ -941,6 +941,7 @@ input, select, textarea {
 
 	#footer {
 		padding: 2.25em 2.25em 1em 2.25em ;
+		text-align: center;
 	}
 
 		#footer .copyright {
