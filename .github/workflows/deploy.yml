@@ -1,0 +1,20 @@
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  
+jobs:
+  deply:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Add SSH Key
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST_FINGERPRINT }} > ~/.ssh/known_hosts
+      - name: Fetch
+        run: ssh nik@$ouroboros.audio "sudo su && cd $HOME/compositions/traefik/www/ouroboros.audio/html/ && git checkout main && git pull && exit"
+      - name: Cleanup
+        run: rm -rf ~/.ssh
