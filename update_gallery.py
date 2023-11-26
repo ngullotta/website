@@ -89,7 +89,7 @@ def copy(path: Path, name: str = None, full_size: bool = True) -> Path:
         (args.output / "fulls") if full_size else (args.output / "thumbs")
     )
     try:
-        return cp(path, destination)
+        return cp(path, destination / name)
     except OSError as ex:
         print(f"[!] Could not copy file @ {path} => {destination}: {ex}")
     return path
