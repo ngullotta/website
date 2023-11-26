@@ -7,8 +7,10 @@ from random import shuffle
 from shutil import copy as cp
 from tempfile import NamedTemporaryFile
 
-from bs4 import BeautifulSoup as soup
+from bs4 import BeautifulSoup as bs
 from PIL import Image, ImageOps
+
+from typing import List
 
 parser = ArgumentParser("Gallery Updater")
 parser.add_argument("images", type=Path, nargs="+")
@@ -59,12 +61,25 @@ def transform(image: Image, ops: List[callable], *args, **kwargs) -> Image:
     return image
 
 
-def add_article():
-    pass
+def add_thumb(section, image, title = None, body = None, alt = ""):
+    heading_html = ""
+    if title:
+        heading_html = "<h2>%s</h2>" % title
 
-
-def shuffle_articles():
-    pass
+    para_html = ""
+    if body:
+        para_html = "<p>%s</p>" % body
+    html = f"""
+    <article>
+        <a class="thumbnail" href="images/fulls/{image.name}">
+            <img src="images/thumbs/{image.name}" alt="{alt}" />
+        </a>
+        {heading_html}
+        {para_html}
+        <a href="images/fulls/{image.name}"><i class="fa fa-expand" aria-hidden="true"></i></a>
+    </article>
+    """
+    section.append(bs(html, 'html.parser'))
 
 
 def copy(path: Path, name: str = None, full_size: bool = True) -> Path:
@@ -79,8 +94,28 @@ def copy(path: Path, name: str = None, full_size: bool = True) -> Path:
         print(f"[!] Could not copy file @ {path} => {destination}: {ex}")
     return path
 
+blurbs = {}
 
-for i, _file in enumerate(files):
+html = Path("index.html").read_text()
+soup = bs(html, 'html.parser')
+
+thumbs = soup.find(id="thumbnails")
+if thumbs:
+    thumbs.clear()
+
+articles = thumbs.find_all("article")
+shuffle(articles)
+
+for i, _file in enumerate(args.images):
+    if _file.name == "blurbs.json":
+        with open(_file) as fp:
+            blurbs = load(fp)
+            args.images.pop(i)
+            break
+
+blurb_content = blurbs.get("blurbs", [])
+
+for i, _file in enumerate(args.images):
     # First, copy the full sized image
     copy(_file)
 
@@ -99,5 +134,27 @@ for i, _file in enumerate(files):
             (args.width, args.height),
             method=Image.Resampling.LANCZOS,
         )
-        image.save(fp.name)
-        copy(fp.name, name=_file.name, full_size=False)
+        image.save(fp.name + _file.suffix)
+        new = copy(fp.name + _file.suffix, name=_file.name, full_size=False)
+
+    try:
+        content = blurb_content[i]
+        add_thumb(
+            thumbs,
+            Path(new),
+            title=content.get("title"),
+            body=content.get("body"),
+            alt=content.get("alt")
+        )
+    except IndexError:
+        add_thumb(thumbs, new)
+
+if args.shuffle:
+    articles = thumbs.find_all("article")
+    shuffle(articles)
+    thumbs.clear()
+    for a in articles:
+        thumbs.append(a)
+
+with open("index.html", "w") as fp:
+    fp.write(soup.prettify())
