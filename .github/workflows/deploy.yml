@@ -15,6 +15,6 @@ jobs:
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
       - name: Fetch
-        run: ssh nik@${{ secrets.SSH_HOST }} "sudo su && cd /root/compositions/traefik/www/ouroboros.audio/html/ && git checkout main && git pull && exit"
+        run: ssh nik@${{ secrets.SSH_HOST }} "sudo git -C /root/compositions/traefik/www/ouroboros.audio/html/ pull"
       - name: Cleanup
         run: rm -rf ~/.ssh
